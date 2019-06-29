@@ -1,0 +1,4 @@
+$gameboard-size: 800px;
+$gap-size: 20px;
+$border-size: $gap-size / 2;
+$tile-size: ($gameboard-size - (5 * $gap-size)) / 4;

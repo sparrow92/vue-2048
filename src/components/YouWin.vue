@@ -7,7 +7,7 @@
       <div v-show="visible" class="youwin__content">
         <h1 class="youwin__heading">You Win!</h1>
         <span class="youwin__text"><strong>Congratulations!</strong></span>
-        <button class="youwin__button">Click to Continue</button>
+        <button class="youwin__button" v-on:click="continueGame">Click to Continue</button>
       </div>
     </transition>
   </div>
@@ -18,6 +18,11 @@ export default {
   name: "YouWin",
   props: {
     visible: Boolean,
+  },
+  methods: {
+    continueGame: function () {
+      this.$emit('clickToContinue');
+    }
   }
 };
 </script>
@@ -32,6 +37,7 @@ export default {
     position: absolute;
     top: -$border-size;
     left: -$border-size;
+    pointer-events: none;
   }
 
   &__background {
@@ -51,6 +57,7 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    pointer-events: auto;
   }
 
   &__heading {

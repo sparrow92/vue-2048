@@ -1,24 +1,36 @@
 <template>
   <div class="container">
-    <Header :score="score" />
-    <div id="gameboard" v-on:keyup.up="up" v-on:keyup.down="down" v-on:keyup.left="left" v-on:keyup.right="right" tabindex="-1" v-cloak autofocus>
-
+    <Header :score="score" @newGame="newGame" />
+    <div
+      id="gameboard"
+      v-on:keyup.up="up"
+      v-on:keyup.down="down"
+      v-on:keyup.left="left"
+      v-on:keyup.right="right"
+      tabindex="-1"
+      v-cloak
+      autofocus
+    >
       <div class="debug">
         <div>
+          <button v-on:click="newTile(2)">add tiles</button>
           <button v-on:click="newGame">new game</button>
           <button v-on:click="addtile">add 2048 tile</button>
           <button v-on:click="testMove">rusz</button>
           <button v-on:click="removetile">remove 0</button>
-          <button v-bind:class="[gameOver ? 'green' : 'red']" v-on:click="gameOver = !gameOver">game over</button>
+          <button
+            v-bind:class="[gameOver ? 'green' : 'red']"
+            v-on:click="gameOver = !gameOver"
+          >game over</button>
           <button v-bind:class="[youWin ? 'green' : 'red']" v-on:click="youWin = !youWin">you win</button>
           <button v-on:click="addPoints(100)">add points</button>
-          <input v-model="aX" placeholder="x value">
-          <input v-model="aY" placeholder="y value">
+          <input v-model="aX" placeholder="x value" />
+          <input v-model="aY" placeholder="y value" />
           <button v-on:click="getTileValue(aX, aY)">get value</button>
-          <div>value of {{`[${aX}, ${aY}]`}}: {{tileValue}}</div>            
+          <div>value of {{`[${aX}, ${aY}]`}}: {{ tileValue }}</div>
         </div>
         <div class="debug-down">
-          <div>TILE: {{ largestTile}}</div>
+          <div>TILE: {{ largestTile }}</div>
           <div v-bind:class="[popup ? 'green' : 'red']">POP-UP</div>
           <div v-bind:class="[noStep ? 'green' : 'red']">NO STEP</div>
           <div v-bind:class="[nextUp ? 'green' : 'red']">UP</div>
@@ -33,12 +45,18 @@
       </div>
 
       <transition-group enter-active-class="animated bounceIn" tag="div">
-        <Tile v-for="tile in tiles" :x="tile['x']" :y="tile['y']" :id="tile.id" :value="tile.value" :key="tile.id" />
+        <Tile
+          v-for="tile in tiles"
+          :x="tile['x']"
+          :y="tile['y']"
+          :id="tile.id"
+          :value="tile.value"
+          :key="tile.id"
+        />
       </transition-group>
 
-      <YouWin :visible="youWin"/> 
-      <GameOver :visible="gameOver" :score="14785" />
-
+      <YouWin :visible="youWin" @clickToContinue="continueGame" />
+      <GameOver :visible="gameOver" @tryAgain="tryAgain" :score="14785" />
     </div>
     <Footer />
   </div>
@@ -60,33 +78,23 @@ export default {
     GameOver,
     YouWin
   },
-  data: function () {
+  data: function() {
     return {
       gameOver: false,
       youWin: false,
       uid: 10,
-      tiles: [
-        { 'x': 1, 'y': 0, value: 64, id: 0 },
-        { 'x': 3, 'y': 0, value: 256, id: 1 },
-        { 'x': 0, 'y': 0, value: 256, id: 89 },
-        { 'x': 0, 'y': 1, value: 128, id: 99 },
-        { 'x': 0, 'y': 2, value: 512, id: 799 },
-        { 'x': 0, 'y': 3, value: 128, id: 1508 }
-      ],
+      tiles: [],
       score: 0,
       aX: 0,
       aY: 0,
       tileValue: 0
-    }
+    };
   },
   created() {
-    //var array = [0, 32, 16, 4, 0, 0];
-    //var response = this.isMovePossible(array);
-    //console.log(response);
+    this.newGame();
   },
   computed: {
-
-    nextUp: function () {
+    nextUp: function() {
       var result = false;
       for (var x = 0; x < 4; x++) {
         var n = 0;
@@ -103,7 +111,7 @@ export default {
       return result;
     },
 
-    nextRight: function () {
+    nextRight: function() {
       var result = false;
       for (var y = 0; y < 4; y++) {
         var n = 3;
@@ -120,7 +128,7 @@ export default {
       return result;
     },
 
-    nextDown: function () {
+    nextDown: function() {
       var result = false;
       for (var x = 0; x < 4; x++) {
         var n = 3;
@@ -137,7 +145,7 @@ export default {
       return result;
     },
 
-    nextLeft: function () {
+    nextLeft: function() {
       var result = false;
       for (var y = 0; y < 4; y++) {
         var n = 0;
@@ -151,61 +159,104 @@ export default {
           break;
         }
       }
-      return result;    
+      return result;
     },
 
-    noStep: function () {
-      return (!this.nextLeft && !this.nextUp && !this.nextRight && !this.nextDown);
+    noStep: function() {
+      return (
+        !this.nextLeft && !this.nextUp && !this.nextRight && !this.nextDown
+      );
     },
 
-    popup: function () {
-      return (this.gameOver || this.youWin);
+    popup: function() {
+      return this.gameOver || this.youWin;
     },
 
-    largestTile: function () {
+    largestTile: function() {
       var array = this.tiles;
-      var maximum = Math.max.apply(Math, array.map(function(arr) { return arr.value; }));
+      var maximum = Math.max.apply(
+        Math,
+        array.map(function(arr) {
+          return arr.value;
+        })
+      );
       return maximum;
     }
-
   },
   watch: {
-
     noStep: function(newValue) {
-      if(newValue) {
+      if (newValue) {
         this.gameOver = true;
       }
     },
 
     largestTile: function(newValue) {
-      if(newValue == 2048) {
+      if (newValue == 2048) {
         this.youWin = true;
+      }
+    }
+  },
+  methods: {
+    newTile: function(x) {
+      for (var i = 0; i < x; i++) {
+        if (this.tiles.length < 16) {
+          do {
+            var a = Math.floor(Math.random() * 4);
+            var b = Math.floor(Math.random() * 4);
+            var notRandomNumbers = [2, 2, 2, 2, 2, 2, 2, 2, 2, 4];
+            var index = Math.floor(Math.random() * notRandomNumbers.length);
+            var tileVal = this.getTileValue(a, b);
+          } while (tileVal > 0);
+
+          //console.log(this.getTileValue(a,b));
+          this.tiles.push({
+            x: a,
+            y: b,
+            value: notRandomNumbers[index],
+            id: this.uid++
+          });
+        }
       }
     },
 
-  },
-  methods: {
-
-    newGame: function () {
-      console.log("nowa gra!");
+    tryAgain: function() {
+      this.gameOver = false;
+      this.newGame();
     },
 
-    getTileValue: function (x, y) {
+    continueGame: function() {
+      this.youWin = false;
+      document.getElementById("gameboard").focus();
+    },
+
+    resetArray: function() {
+      this.tiles = [];
+    },
+
+    newGame: function() {
+      this.resetArray();
+      this.score = 0;
+      this.newTile(2);
+      document.getElementById("gameboard").focus();
+    },
+
+    getTileValue: function(x, y) {
       var array = this.tiles;
-      var results = array.map(function (tile) {
-        if (tile['x'] == x && tile['y'] == y) {
+      var results = array.map(function(tile) {
+        if (tile["x"] == x && tile["y"] == y) {
           return tile.value;
-        }
-        else {
+        } else {
           return null;
-        } 
+        }
       });
       this.tileValue = Math.max.apply(null, results);
       return Math.max.apply(null, results);
     },
 
-    isMovePossible: function (array) {
-      var filtered = array.filter(function(el) { return el > 0; }).length;
+    isMovePossible: function(array) {
+      var filtered = array.filter(function(el) {
+        return el > 0;
+      }).length;
       var sliced = array.slice(0, filtered);
       array = sliced;
       var response = false;
@@ -214,7 +265,7 @@ export default {
       }
       if (array.length > 1) {
         for (var i = 1; i < array.length; i++) {
-          if (array[i] == array[i-1] || array[i-1] == 0 || array[i] == 0) {
+          if (array[i] == array[i - 1] || array[i - 1] == 0 || array[i] == 0) {
             response = true;
             break;
           }
@@ -223,69 +274,68 @@ export default {
       return response;
     },
 
-    up: function () {
+    up: function() {
       if (this.nextUp && !this.popup) {
-        console.log("up");
+        this.newTile(1);
       }
     },
 
-    left: function () {
+    left: function() {
       if (this.nextLeft && !this.popup) {
-        console.log("left");
+        this.newTile(1);
       }
     },
 
-    right: function () {
+    right: function() {
       if (this.nextRight && !this.popup) {
-        console.log("right");
+        this.newTile(1);
       }
     },
 
-    down: function () {
+    down: function() {
       if (this.nextDown && !this.popup) {
-        console.log("down");
+        this.newTile(1);
       }
     },
 
     /* FUNKCJE TESTOWE! FUNKCJE TESTOWE! FUNKCJE TESTOWE! */
 
-    testMove: function () {
+    testMove: function() {
       this.goRight().then(this.removetile);
     },
 
-    goRight: function () {
-      return new Promise((resolve, reject) => {
-          this.tiles[0]['x'] = 3;
-          resolve();
-      })
+    goRight: function() {
+      return new Promise(resolve => {
+        this.tiles[0]["x"] = 3;
+        resolve();
+      });
     },
 
-    addtile: function () {
-      this.tiles.push({ 'x': 0, 'y': 2, value: 2048, id: this.uid++}); 
+    addtile: function() {
+      this.tiles.push({ x: 0, y: 2, value: 2048, id: this.uid++ });
     },
 
-    trzysekundy: function () {
-      return new Promise((resolve, reject) => {
-          this.tiles[0]['x'] = 2;
-          resolve();
-      })
+    trzysekundy: function() {
+      return new Promise(resolve => {
+        this.tiles[0]["x"] = 2;
+        resolve();
+      });
     },
 
-    removetile: function () {
-        for (var i = 0; i < this.tiles.length; i++) {
-            var tile = this.tiles[i];
-            if(tile.id == 0) {
-                this.tiles.splice(i, 1);
-                this.tiles.push({ 'x': 3, 'y': 2, value: 128, id: this.uid++}); 
-                break;
-            }
+    removetile: function() {
+      for (var i = 0; i < this.tiles.length; i++) {
+        var tile = this.tiles[i];
+        if (tile.id == 0) {
+          this.tiles.splice(i, 1);
+          this.tiles.push({ x: 3, y: 2, value: 128, id: this.uid++ });
+          break;
         }
+      }
     },
 
-    addPoints: function (x) {
+    addPoints: function(x) {
       this.score = this.score + x;
     }
-
   }
 };
 </script>
@@ -318,7 +368,7 @@ export default {
     border: 1px solid rgb(170, 157, 157);
     padding: 3px;
   }
-  
+
   & button {
     margin-bottom: 5px;
     padding: 7px;

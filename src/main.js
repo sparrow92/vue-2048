@@ -1,6 +1,7 @@
 import Vue from "vue";
 import App from "./App.vue";
 import "animate.css";
+import { TweenMax } from "gsap/TweenMax";
 
 Vue.config.productionTip = false;
 

@@ -7,7 +7,7 @@
       <div v-show="visible" class="gameover__content">
         <h1 class="gameover__heading">Game Over!</h1>
         <span class="gameover__text">Your score:<strong> {{ score }}</strong></span>
-        <button class="gameover__button">Try Again!</button>
+        <button class="gameover__button" v-on:click="tryAgain">Try Again!</button>
       </div>
     </transition>
   </div>
@@ -19,6 +19,11 @@ export default {
   props: {
     visible: Boolean,
     score: Number
+  },
+  methods: {
+    tryAgain: function () {
+      this.$emit('tryAgain');
+    }
   }
 };
 </script>
@@ -33,6 +38,7 @@ export default {
     position: absolute;
     top: -$border-size;
     left: -$border-size;
+    pointer-events: none;
   }
 
   &__background {
@@ -52,6 +58,7 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    pointer-events: auto;
   }
 
   &__heading {

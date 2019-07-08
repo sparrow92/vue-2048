@@ -14,20 +14,26 @@
       <div class="debug">
         <div>
           <button v-on:click="newTile(2)">add tiles</button>
-          <button v-on:click="newGame">new game</button>
-          <button v-on:click="addtile">add 2048 tile</button>
-          <button v-on:click="testMove">rusz</button>
-          <button v-on:click="removetile">remove 0</button>
+          <button v-on:click="addTile(2048)">add 2048 tile</button>
           <button
             v-bind:class="[gameOver ? 'green' : 'red']"
             v-on:click="gameOver = !gameOver"
           >game over</button>
           <button v-bind:class="[youWin ? 'green' : 'red']" v-on:click="youWin = !youWin">you win</button>
           <button v-on:click="addPoints(100)">add points</button>
-          <input v-model="aX" placeholder="x value" />
-          <input v-model="aY" placeholder="y value" />
+          <input v-model="aX" placeholder="x value" type="number" />
+          <input v-model="aY" placeholder="y value" type="number" />
           <button v-on:click="getTileValue(aX, aY)">get value</button>
           <div>value of {{`[${aX}, ${aY}]`}}: {{ tileValue }}</div>
+          <br><hr><br>
+          <strong>ANIMATIONS</strong>
+          <input v-model="bX" placeholder="x value" type="number" />
+          <input v-model="bY" placeholder="y value" type="number" /><br><br>
+          <button v-on:click="moveTile(bX, bY, aX, aY)">move</button>
+          <button v-on:click="moveAndRemove(bX, bY, aX, aY, 150)">move & remove</button>
+          <button v-on:click="doubleTile(bX, bY, 150)">double</button>
+          <button v-on:click="moveAndDouble(bX, bY, aX, aY, 150)">move & double</button>
+          <button v-on:click="removeTile(bX, bY, 150)">remove</button>
         </div>
         <div class="debug-down">
           <div>TILE: {{ largestTile }}</div>
@@ -44,16 +50,16 @@
         <div class="default-tile"></div>
       </div>
 
-      <transition-group enter-active-class="animated bounceIn" tag="div">
+      
         <Tile
           v-for="tile in tiles"
-          :x="tile['x']"
-          :y="tile['y']"
+          :x="tile.x"
+          :y="tile.y"
           :id="tile.id"
           :value="tile.value"
-          :key="tile.id"
+          :key="tile+tile.id"
         />
-      </transition-group>
+      
 
       <YouWin :visible="youWin" @clickToContinue="continueGame" />
       <GameOver :visible="gameOver" @tryAgain="tryAgain" :score="14785" />
@@ -82,11 +88,13 @@ export default {
     return {
       gameOver: false,
       youWin: false,
-      uid: 10,
+      uid: 0,
       tiles: [],
       score: 0,
       aX: 0,
       aY: 0,
+      bX: 0,
+      bY: 0,
       tileValue: 0
     };
   },
@@ -96,11 +104,11 @@ export default {
   computed: {
     nextUp: function() {
       var result = false;
-      for (var x = 0; x < 4; x++) {
+      for (var a = 0; a < 4; a++) {
         var n = 0;
         var row = [];
         while (n < 4) {
-          row.push(this.getTileValue(x, n));
+          row.push(this.getTileValue(a, n));
           n++;
         }
         if (this.isMovePossible(row)) {
@@ -113,11 +121,11 @@ export default {
 
     nextRight: function() {
       var result = false;
-      for (var y = 0; y < 4; y++) {
+      for (var b = 0; b < 4; b++) {
         var n = 3;
         var row = [];
         while (n >= 0) {
-          row.push(this.getTileValue(n, y));
+          row.push(this.getTileValue(n, b));
           n--;
         }
         if (this.isMovePossible(row)) {
@@ -130,11 +138,11 @@ export default {
 
     nextDown: function() {
       var result = false;
-      for (var x = 0; x < 4; x++) {
+      for (var a = 0; a < 4; a++) {
         var n = 3;
         var row = [];
         while (n >= 0) {
-          row.push(this.getTileValue(x, n));
+          row.push(this.getTileValue(a, n));
           n--;
         }
         if (this.isMovePossible(row)) {
@@ -147,11 +155,11 @@ export default {
 
     nextLeft: function() {
       var result = false;
-      for (var y = 0; y < 4; y++) {
+      for (var b = 0; b < 4; b++) {
         var n = 0;
         var row = [];
         while (n < 4) {
-          row.push(this.getTileValue(n, y));
+          row.push(this.getTileValue(n, b));
           n++;
         }
         if (this.isMovePossible(row)) {
@@ -197,8 +205,8 @@ export default {
     }
   },
   methods: {
-    newTile: function(x) {
-      for (var i = 0; i < x; i++) {
+    newTile: function(t) {
+      for (var i = 0; i < t; i++) {
         if (this.tiles.length < 16) {
           do {
             var a = Math.floor(Math.random() * 4);
@@ -240,10 +248,10 @@ export default {
       document.getElementById("gameboard").focus();
     },
 
-    getTileValue: function(x, y) {
+    getTileValue: function(a, b) {
       var array = this.tiles;
       var results = array.map(function(tile) {
-        if (tile["x"] == x && tile["y"] == y) {
+        if (tile.x == a && tile.y == b) {
           return tile.value;
         } else {
           return null;
@@ -276,6 +284,21 @@ export default {
 
     up: function() {
       if (this.nextUp && !this.popup) {
+        for (var a = 0; a < 4; a++ ) {
+          var n = 0;
+          var row = [];
+          while (n < 4) {
+            var value = this.getTileValue(a, n);
+            var index = this.getTileIndex(a, n);
+            if (value > 0) {
+              row.push(this.tiles[index]);
+            }
+            n++;
+          }
+
+          this.sortRow(row, 0, -1);
+         
+        }
         this.newTile(1);
       }
     },
@@ -294,43 +317,101 @@ export default {
 
     down: function() {
       if (this.nextDown && !this.popup) {
-        this.newTile(1);
+        for (var a = 0; a < 4; a++) {
+          var n = 3;
+          var row = [];
+          while (n >= 0) {
+            var value = this.getTileValue(a, n);
+            var index = this.getTileIndex(a, n);
+            if (value > 0) {
+              row.push(this.tiles[index]);
+            }
+            n--;
+          }
+
+          console.log(row.length);
+          this.sortRow(row, 0, 1);
+
+        }
+        //this.newTile(1);
       }
+    },
+
+    getTileIndex: function (a, b) {
+      var index = this.tiles.findIndex(function (e) { 
+        return e.x == a && e.y == b; 
+      });
+      return index;
+    },
+
+    removeTile: function(a, b, ms) {
+      setTimeout(() => {
+        var index = this.getTileIndex(a, b);
+        this.tiles.splice(index, 1);  
+      }, ms);
+    },
+
+    moveTile: function(a, b, c, d) {
+      return new Promise(resolve => {
+        var index = this.getTileIndex(a, b);
+        this.tiles[index].x += c;
+        this.tiles[index].y += d;
+        resolve();
+      });
+    },
+
+    doubleTile: function(a, b, ms) {
+      setTimeout(() => {
+        var index = this.getTileIndex(a, b);
+        this.tiles[index].id = this.uid++;
+        this.tiles[index].value *= 2;
+      }, ms);
+    },
+
+    moveAndRemove: function(a, b, c, d, ms) {
+      this.moveTile(a, b, c, d).then(
+        this.removeTile(a+c, b+d, ms)
+      );
+    },
+
+    moveAndDouble: function(a, b, c, d, ms) {
+      this.moveTile(a, b, c, d).then(
+        this.doubleTile(a+c, b+d, ms)
+      );
+    },
+
+    sortRow: function(row, vectorX, vectorY) {
+
+      var absX = Math.abs(vectorX);
+      var absY = Math.abs(vectorY);
+
+      for (var i = 0, line = 0; i < row.length; i++, line++) {
+
+        var position1 = (absX * row[i].x) + (absY * row[i].y);
+        var dist1 = Math.abs(line - position1);
+
+        if (typeof row[i+1] !== 'undefined') {
+          var position2 = (absX * row[i+1].x) + (absY * row[i+1].y);
+          var dist2 = Math.abs(line - position2);
+        }
+
+        if (typeof row[i+1] !== 'undefined' && row[i].value == row[i+1].value) {
+          this.moveAndRemove(row[i].x, row[i].y, vectorX*dist1, vectorY*dist1, 75);
+          this.moveAndDouble(row[i+1].x, row[i+1].y, vectorX*dist2, vectorY*dist2, 75);
+          i++;
+        }
+        else {
+          this.moveTile(row[i].x, row[i].y, vectorX*dist1, vectorY*dist1);
+        }
+        
+      }
+
     },
 
     /* FUNKCJE TESTOWE! FUNKCJE TESTOWE! FUNKCJE TESTOWE! */
 
-    testMove: function() {
-      this.goRight().then(this.removetile);
-    },
-
-    goRight: function() {
-      return new Promise(resolve => {
-        this.tiles[0]["x"] = 3;
-        resolve();
-      });
-    },
-
-    addtile: function() {
-      this.tiles.push({ x: 0, y: 2, value: 2048, id: this.uid++ });
-    },
-
-    trzysekundy: function() {
-      return new Promise(resolve => {
-        this.tiles[0]["x"] = 2;
-        resolve();
-      });
-    },
-
-    removetile: function() {
-      for (var i = 0; i < this.tiles.length; i++) {
-        var tile = this.tiles[i];
-        if (tile.id == 0) {
-          this.tiles.splice(i, 1);
-          this.tiles.push({ x: 3, y: 2, value: 128, id: this.uid++ });
-          break;
-        }
-      }
+    addTile: function(value) {
+      this.tiles.push({ x: 0, y: 2, value: value, id: this.uid++ });
     },
 
     addPoints: function(x) {

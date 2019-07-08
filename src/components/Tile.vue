@@ -24,6 +24,21 @@ export default {
 <style lang="scss">
 @import "@/variables.scss";
 
+.bounce-enter-active {
+  animation: bounce-in .4s;
+}
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 .tile {
   position: absolute;
   width: 25%;
@@ -31,9 +46,10 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: all 0.15s ease;
+  transition: all 75ms ease-in;
   font-size: 2rem;
   font-weight: bold;  
+  animation: bounce-in .4s;
 
   &--default {
     width: $tile-size;

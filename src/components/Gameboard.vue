@@ -62,7 +62,7 @@
       
 
       <YouWin :visible="youWin" @clickToContinue="continueGame" />
-      <GameOver :visible="gameOver" @tryAgain="tryAgain" :score="14785" />
+      <GameOver :visible="gameOver" @tryAgain="tryAgain" :score="score" />
     </div>
     <Footer />
   </div>
@@ -242,6 +242,8 @@ export default {
     },
 
     newGame: function() {
+      this.gameOver = false;
+      this.youWin = false;
       this.resetArray();
       this.score = 0;
       this.newTile(2);
@@ -305,12 +307,39 @@ export default {
 
     left: function() {
       if (this.nextLeft && !this.popup) {
+        for (var b = 0; b < 4; b++) {
+          var n = 0;
+          var row = [];
+          while (n < 4) {
+            var value = this.getTileValue(n, b);
+            var index = this.getTileIndex(n, b);
+            if (value > 0) {
+              row.push(this.tiles[index]);
+            }
+            n++;
+          }
+          this.sortRow(row, -1, 0);
+        }
         this.newTile(1);
       }
     },
 
     right: function() {
       if (this.nextRight && !this.popup) {
+        for (var b = 0; b < 4; b++) {
+          var n = 3;
+          var row = [];
+          while (n >= 0) {
+            var value = this.getTileValue(n, b);
+            var index = this.getTileIndex(n, b);
+            if (value > 0) {
+              row.push(this.tiles[index]);
+            }
+            n--;
+          }
+          //console.log(row);
+          this.sortRow(row, 1, 0);
+        }
         this.newTile(1);
       }
     },
@@ -328,12 +357,11 @@ export default {
             }
             n--;
           }
-
-          console.log(row.length);
+          //console.log(row);
           this.sortRow(row, 0, 1);
-
+          
         }
-        //this.newTile(1);
+        this.newTile(1);
       }
     },
 
@@ -365,6 +393,7 @@ export default {
         var index = this.getTileIndex(a, b);
         this.tiles[index].id = this.uid++;
         this.tiles[index].value *= 2;
+        this.score += this.tiles[index].value;
       }, ms);
     },
 
@@ -385,7 +414,14 @@ export default {
       var absX = Math.abs(vectorX);
       var absY = Math.abs(vectorY);
 
-      for (var i = 0, line = 0; i < row.length; i++, line++) {
+      if (vectorX == 1 || vectorY == 1) {
+        var counter = 3;
+      }
+      else {
+        var counter = 0;
+      }
+
+      for (var i = 0, line = counter; i < row.length; i++, line+=((-1 * vectorY) + (-1 * vectorX))) {
 
         var position1 = (absX * row[i].x) + (absY * row[i].y);
         var dist1 = Math.abs(line - position1);

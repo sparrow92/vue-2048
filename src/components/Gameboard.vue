@@ -1,70 +1,19 @@
 <template>
-  <div class="container">
-    <Header :score="score" @newGame="newGame" />
-    <div
-      id="gameboard"
-      v-on:keyup.up="up"
-      v-on:keyup.down="down"
-      v-on:keyup.left="left"
-      v-on:keyup.right="right"
-      tabindex="-1"
-      v-cloak
-      autofocus
-    >
-      <div class="debug">
-        <div>
-          <button v-on:click="newTile(2)">add tiles</button>
-          <button v-on:click="addTile(2048)">add 2048 tile</button>
-          <button
-            v-bind:class="[gameOver ? 'green' : 'red']"
-            v-on:click="gameOver = !gameOver"
-          >game over</button>
-          <button v-bind:class="[youWin ? 'green' : 'red']" v-on:click="youWin = !youWin">you win</button>
-          <button v-on:click="addPoints(100)">add points</button>
-          <input v-model="aX" placeholder="x value" type="number" />
-          <input v-model="aY" placeholder="y value" type="number" />
-          <button v-on:click="getTileValue(aX, aY)">get value</button>
-          <div>value of {{`[${aX}, ${aY}]`}}: {{ tileValue }}</div>
-          <br><hr><br>
-          <strong>ANIMATIONS</strong>
-          <input v-model="bX" placeholder="x value" type="number" />
-          <input v-model="bY" placeholder="y value" type="number" /><br><br>
-          <button v-on:click="moveTile(bX, bY, aX, aY)">move</button>
-          <button v-on:click="moveAndRemove(bX, bY, aX, aY, 150)">move & remove</button>
-          <button v-on:click="doubleTile(bX, bY, 150)">double</button>
-          <button v-on:click="moveAndDouble(bX, bY, aX, aY, 150)">move & double</button>
-          <button v-on:click="removeTile(bX, bY, 150)">remove</button>
-        </div>
-        <div class="debug-down">
-          <div>TILE: {{ largestTile }}</div>
-          <div v-bind:class="[popup ? 'green' : 'red']">POP-UP</div>
-          <div v-bind:class="[noStep ? 'green' : 'red']">NO STEP</div>
-          <div v-bind:class="[nextUp ? 'green' : 'red']">UP</div>
-          <div v-bind:class="[nextRight ? 'green' : 'red']">RIGHT</div>
-          <div v-bind:class="[nextDown ? 'green' : 'red']">DOWN</div>
-          <div v-bind:class="[nextLeft ? 'green' : 'red']">LEFT</div>
-        </div>
-      </div>
+  <div id="control" class="container" @keyup.up="up" @keyup.down="down" @keyup.left="left" @keyup.right="right" tabindex="-1" autofocus>
 
+    <Header :score="score" @newGame="newGame" />
+
+    <div class="gameboard">
       <div class="grid-tile" v-for="n in 16" v-bind:key="n">
         <div class="default-tile"></div>
       </div>
-
-      
-        <Tile
-          v-for="tile in tiles"
-          :x="tile.x"
-          :y="tile.y"
-          :id="tile.id"
-          :value="tile.value"
-          :key="tile+tile.id"
-        />
-      
-
+      <Tile v-for="tile in tiles" :x="tile.x" :y="tile.y" :value="tile.value" :key="tile.id" />
       <YouWin :visible="youWin" @clickToContinue="continueGame" />
       <GameOver :visible="gameOver" @tryAgain="tryAgain" :score="score" />
     </div>
+
     <Footer />
+
   </div>
 </template>
 
@@ -88,17 +37,13 @@ export default {
     return {
       gameOver: false,
       youWin: false,
-      uid: 0,
       tiles: [],
       score: 0,
-      aX: 0,
-      aY: 0,
-      bX: 0,
-      bY: 0,
       tileValue: 0
     };
   },
   created() {
+    //document.getElementById("control").focus();
     this.newGame();
   },
   computed: {
@@ -207,7 +152,7 @@ export default {
   methods: {
     newTile: function(t) {
       for (var i = 0; i < t; i++) {
-        if (this.tiles.length < 16) {
+        if (this.tiles.length < 17) {
           do {
             var a = Math.floor(Math.random() * 4);
             var b = Math.floor(Math.random() * 4);
@@ -221,7 +166,7 @@ export default {
             x: a,
             y: b,
             value: notRandomNumbers[index],
-            id: this.uid++
+            id: this.generateId()
           });
         }
       }
@@ -234,7 +179,7 @@ export default {
 
     continueGame: function() {
       this.youWin = false;
-      document.getElementById("gameboard").focus();
+      //document.getElementById("control").focus();
     },
 
     resetArray: function() {
@@ -247,7 +192,7 @@ export default {
       this.resetArray();
       this.score = 0;
       this.newTile(2);
-      document.getElementById("gameboard").focus();
+      //document.getElementById("control").focus();
     },
 
     getTileValue: function(a, b) {
@@ -337,7 +282,6 @@ export default {
             }
             n--;
           }
-          //console.log(row);
           this.sortRow(row, 1, 0);
         }
         this.newTile(1);
@@ -357,7 +301,6 @@ export default {
             }
             n--;
           }
-          //console.log(row);
           this.sortRow(row, 0, 1);
           
         }
@@ -391,7 +334,7 @@ export default {
     doubleTile: function(a, b, ms) {
       setTimeout(() => {
         var index = this.getTileIndex(a, b);
-        this.tiles[index].id = this.uid++;
+        this.tiles[index].id = this.generateId();
         this.tiles[index].value *= 2;
         this.score += this.tiles[index].value;
       }, ms);
@@ -432,27 +375,28 @@ export default {
         }
 
         if (typeof row[i+1] !== 'undefined' && row[i].value == row[i+1].value) {
-          this.moveAndRemove(row[i].x, row[i].y, vectorX*dist1, vectorY*dist1, 75);
-          this.moveAndDouble(row[i+1].x, row[i+1].y, vectorX*dist2, vectorY*dist2, 75);
+          this.moveAndRemove(row[i].x, row[i].y, vectorX * dist1, vectorY * dist1, 100);
+          this.moveAndDouble(row[i+1].x, row[i+1].y, vectorX * dist2, vectorY * dist2, 100);
           i++;
         }
         else {
-          this.moveTile(row[i].x, row[i].y, vectorX*dist1, vectorY*dist1);
+          this.moveTile(row[i].x, row[i].y, vectorX * dist1, vectorY * dist1);
         }
         
       }
 
     },
 
-    /* FUNKCJE TESTOWE! FUNKCJE TESTOWE! FUNKCJE TESTOWE! */
-
-    addTile: function(value) {
-      this.tiles.push({ x: 0, y: 2, value: value, id: this.uid++ });
-    },
-
-    addPoints: function(x) {
-      this.score = this.score + x;
+    generateId: function () {
+      var result = '';
+      var characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      var charactersLength = characters.length;
+      for ( var i = 0; i < 6; i++ ) {
+          result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      }
+      return result;      
     }
+
   }
 };
 </script>
@@ -460,55 +404,13 @@ export default {
 <style scoped lang="scss">
 @import "@/variables.scss";
 
-.debug {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: #baaca1;
-  padding: 20px;
-  width: 200px;
-  box-sizing: border-box;
-  justify-content: space-between;
-
-  & .debug-down > div {
-    font-weight: bold;
-    margin: 5px;
-  }
-
-  & input {
-    width: 35%;
-    box-sizing: border-box;
-    margin: 5px 5px;
-    border: 1px solid rgb(170, 157, 157);
-    padding: 3px;
-  }
-
-  & button {
-    margin-bottom: 5px;
-    padding: 7px;
-    text-transform: uppercase;
-    font-weight: bold;
-    color: #363636;
-    font-size: 0.9rem;
-    width: 100%;
-  }
-  .red {
-    color: rgb(160, 45, 45) !important;
-  }
-  .green {
-    color: rgb(73, 151, 73) !important;
-  }
-}
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 50px;
 }
-#gameboard {
+.gameboard {
   height: $gameboard-size;
   width: $gameboard-size;
   border-radius: $border-radius;

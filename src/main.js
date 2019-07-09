@@ -5,10 +5,6 @@ import { TweenMax } from "gsap/TweenMax";
 
 Vue.config.productionTip = false;
 
-window.onload = function() {
-  document.getElementById("gameboard").focus();
-};
-
 window.addEventListener(
   "keydown",
   function(e) {

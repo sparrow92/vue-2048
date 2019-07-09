@@ -8,7 +8,6 @@
 export default {
   name: "Tile",
   props: {
-    id: Number,
     x: Number,
     y: Number,
     value: Number
@@ -46,7 +45,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: all 75ms ease-in;
+  transition: all 100ms ease-in-out;
   font-size: 2rem;
   font-weight: bold;  
   animation: bounce-in .4s;

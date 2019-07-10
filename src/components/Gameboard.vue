@@ -1,5 +1,5 @@
 <template>
-  <div id="control" class="container" @keyup.up="up" @keyup.down="down" @keyup.left="left" @keyup.right="right" tabindex="-1" autofocus>
+  <div v-autofocus id="control" class="container" @keyup.up="up" @keyup.down="down" @keyup.left="left" @keyup.right="right" tabindex="-1">
 
     <Header :score="score" @newGame="newGame" />
 
@@ -43,7 +43,6 @@ export default {
     };
   },
   created() {
-    //document.getElementById("control").focus();
     this.newGame();
   },
   computed: {
@@ -179,7 +178,6 @@ export default {
 
     continueGame: function() {
       this.youWin = false;
-      //document.getElementById("control").focus();
     },
 
     resetArray: function() {
@@ -192,7 +190,6 @@ export default {
       this.resetArray();
       this.score = 0;
       this.newTile(2);
-      //document.getElementById("control").focus();
     },
 
     getTileValue: function(a, b) {
@@ -357,11 +354,12 @@ export default {
       var absX = Math.abs(vectorX);
       var absY = Math.abs(vectorY);
 
+      var counter;
       if (vectorX == 1 || vectorY == 1) {
-        var counter = 3;
+        counter = 3;
       }
       else {
-        var counter = 0;
+        counter = 0;
       }
 
       for (var i = 0, line = counter; i < row.length; i++, line+=((-1 * vectorY) + (-1 * vectorX))) {
@@ -408,7 +406,10 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   padding: 50px;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 .gameboard {
   height: $gameboard-size;

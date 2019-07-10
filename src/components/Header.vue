@@ -51,8 +51,7 @@ export default {
     },
   },
   created() {
-    //this.bestScore = 500;
-    //this.tweenedBestScore = 500;
+
   },
   methods: {
     newGame: function () {

@@ -1,29 +1,14 @@
-# vue-2048
+# **2048**
 
-## Project setup
-```
-npm install
-```
+## **General info**
+Project inspired by [Gabriele Cirulli's 2048](https://github.com/gabrielecirulli/2048). Created for educational purposes. The primary objective is to make full use of Vue in creating game mechanics.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## **Technologies**
+Project is created with:
+* **Vue** version 2.6.10
+* **Animate CSS** version: 3.7.2
+* **gsap** version: 2.1.3
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## **Objectives**
+* implement responsive layout
+* improve sorting algorithms 

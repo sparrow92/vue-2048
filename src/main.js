@@ -1,7 +1,6 @@
 import Vue from "vue";
 import App from "./App.vue";
 import "animate.css";
-import "gsap/TweenMax";
 import autofocus from "vue-autofocus-directive";
 Vue.directive("autofocus", autofocus);
 

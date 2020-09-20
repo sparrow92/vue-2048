@@ -10,14 +10,17 @@
       <span class="header__score--amount">{{ animatedBestScore }}</span>
     </div>
     <div>
-      <button class="header__button" v-on:click="newGame"><strong>New Game</strong></button>
+      <button class="header__button" v-on:click="newGame">
+        <strong>New Game</strong>
+      </button>
     </div>
   </div>
 </template>
 
 <script>
+import { TweenLite } from "gsap/TweenMax";
+
 export default {
-  name: "Header",
   props: {
     score: Number
   },
@@ -25,7 +28,7 @@ export default {
     return {
       bestScore: 0,
       tweenedScore: 0,
-      tweenedBestScore: 0,
+      tweenedBestScore: 0
     };
   },
   computed: {
@@ -34,7 +37,7 @@ export default {
     },
     animatedScore: function() {
       return this.tweenedScore.toFixed(0);
-    },
+    }
   },
   watch: {
     score: function(newValue) {
@@ -48,21 +51,19 @@ export default {
     },
     bestScore: function(newValue) {
       TweenLite.to(this.$data, 0.5, { tweenedBestScore: newValue });
-    },
+    }
   },
-  created() {
-
-  },
+  created() {},
   methods: {
-    newGame: function () {
-      this.$emit('newGame');
+    newGame: function() {
+      this.$emit("newGame");
     }
   }
 };
 </script>
 
 <style scoped lang="scss">
-@import "@/variables.scss";
+@import "@/assets/variables.scss";
 
 .header {
   width: $gameboard-size;

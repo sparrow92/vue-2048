@@ -1,13 +1,21 @@
 <template>
   <div class="youwin__container">
-    <transition enter-active-class="animated fadeIn" leave-active-class="animated fadeOut">
+    <transition
+      enter-active-class="animated fadeIn"
+      leave-active-class="animated fadeOut"
+    >
       <div v-show="visible" class="youwin__background"></div>
     </transition>
-    <transition enter-active-class="animated tada" leave-active-class="animated bounceOutDown">
+    <transition
+      enter-active-class="animated tada"
+      leave-active-class="animated bounceOutDown"
+    >
       <div v-show="visible" class="youwin__content">
         <h1 class="youwin__heading">You Win!</h1>
         <span class="youwin__text"><strong>Congratulations!</strong></span>
-        <button class="youwin__button" v-on:click="continueGame">Click to Continue</button>
+        <button class="youwin__button" v-on:click="continueGame">
+          Click to Continue
+        </button>
       </div>
     </transition>
   </div>
@@ -15,20 +23,19 @@
 
 <script>
 export default {
-  name: "YouWin",
   props: {
-    visible: Boolean,
+    visible: Boolean
   },
   methods: {
-    continueGame: function () {
-      this.$emit('clickToContinue');
+    continueGame: function() {
+      this.$emit("clickToContinue");
     }
   }
 };
 </script>
 
 <style scoped lang="scss">
-@import "@/variables.scss";
+@import "@/assets/variables.scss";
 
 .youwin {
   &__container {

@@ -1,19 +1,32 @@
 <template>
-  <div v-autofocus id="control" class="container" @keyup.up="up" @keyup.down="down" @keyup.left="left" @keyup.right="right" tabindex="-1">
-
+  <div
+    v-autofocus
+    id="control"
+    class="container"
+    @keyup.up="up"
+    @keyup.down="down"
+    @keyup.left="left"
+    @keyup.right="right"
+    tabindex="-1"
+  >
     <Header :score="score" @newGame="newGame" />
 
     <div class="gameboard">
       <div class="grid-tile" v-for="n in 16" v-bind:key="n">
         <div class="default-tile"></div>
       </div>
-      <Tile v-for="tile in tiles" :x="tile.x" :y="tile.y" :value="tile.value" :key="tile.id" />
+      <Tile
+        v-for="tile in tiles"
+        :x="tile.x"
+        :y="tile.y"
+        :value="tile.value"
+        :key="tile.id"
+      />
       <YouWin :visible="youWin" @clickToContinue="continueGame" />
       <GameOver :visible="gameOver" @tryAgain="tryAgain" :score="score" />
     </div>
 
     <Footer />
-
   </div>
 </template>
 
@@ -25,7 +38,6 @@ import GameOver from "@/components/GameOver.vue";
 import YouWin from "@/components/YouWin.vue";
 
 export default {
-  name: "Gameboard",
   components: {
     Header,
     Footer,
@@ -228,7 +240,7 @@ export default {
 
     up: function() {
       if (this.nextUp && !this.popup) {
-        for (var a = 0; a < 4; a++ ) {
+        for (var a = 0; a < 4; a++) {
           var n = 0;
           var row = [];
           while (n < 4) {
@@ -241,7 +253,6 @@ export default {
           }
 
           this.sortRow(row, 0, -1);
-         
         }
         this.newTile(1);
       }
@@ -299,15 +310,14 @@ export default {
             n--;
           }
           this.sortRow(row, 0, 1);
-          
         }
         this.newTile(1);
       }
     },
 
-    getTileIndex: function (a, b) {
-      var index = this.tiles.findIndex(function (e) { 
-        return e.x == a && e.y == b; 
+    getTileIndex: function(a, b) {
+      var index = this.tiles.findIndex(function(e) {
+        return e.x == a && e.y == b;
       });
       return index;
     },
@@ -315,7 +325,7 @@ export default {
     removeTile: function(a, b, ms) {
       setTimeout(() => {
         var index = this.getTileIndex(a, b);
-        this.tiles.splice(index, 1);  
+        this.tiles.splice(index, 1);
       }, ms);
     },
 
@@ -338,69 +348,79 @@ export default {
     },
 
     moveAndRemove: function(a, b, c, d, ms) {
-      this.moveTile(a, b, c, d).then(
-        this.removeTile(a+c, b+d, ms)
-      );
+      this.moveTile(a, b, c, d).then(this.removeTile(a + c, b + d, ms));
     },
 
     moveAndDouble: function(a, b, c, d, ms) {
-      this.moveTile(a, b, c, d).then(
-        this.doubleTile(a+c, b+d, ms)
-      );
+      this.moveTile(a, b, c, d).then(this.doubleTile(a + c, b + d, ms));
     },
 
     sortRow: function(row, vectorX, vectorY) {
-
       var absX = Math.abs(vectorX);
       var absY = Math.abs(vectorY);
 
       var counter;
       if (vectorX == 1 || vectorY == 1) {
         counter = 3;
-      }
-      else {
+      } else {
         counter = 0;
       }
 
-      for (var i = 0, line = counter; i < row.length; i++, line+=((-1 * vectorY) + (-1 * vectorX))) {
-
-        var position1 = (absX * row[i].x) + (absY * row[i].y);
+      for (
+        var i = 0, line = counter;
+        i < row.length;
+        i++, line += -1 * vectorY + -1 * vectorX
+      ) {
+        var position1 = absX * row[i].x + absY * row[i].y;
         var dist1 = Math.abs(line - position1);
 
-        if (typeof row[i+1] !== 'undefined') {
-          var position2 = (absX * row[i+1].x) + (absY * row[i+1].y);
+        if (typeof row[i + 1] !== "undefined") {
+          var position2 = absX * row[i + 1].x + absY * row[i + 1].y;
           var dist2 = Math.abs(line - position2);
         }
 
-        if (typeof row[i+1] !== 'undefined' && row[i].value == row[i+1].value) {
-          this.moveAndRemove(row[i].x, row[i].y, vectorX * dist1, vectorY * dist1, 100);
-          this.moveAndDouble(row[i+1].x, row[i+1].y, vectorX * dist2, vectorY * dist2, 100);
+        if (
+          typeof row[i + 1] !== "undefined" &&
+          row[i].value == row[i + 1].value
+        ) {
+          this.moveAndRemove(
+            row[i].x,
+            row[i].y,
+            vectorX * dist1,
+            vectorY * dist1,
+            100
+          );
+          this.moveAndDouble(
+            row[i + 1].x,
+            row[i + 1].y,
+            vectorX * dist2,
+            vectorY * dist2,
+            100
+          );
           i++;
-        }
-        else {
+        } else {
           this.moveTile(row[i].x, row[i].y, vectorX * dist1, vectorY * dist1);
         }
-        
       }
-
     },
 
-    generateId: function () {
-      var result = '';
-      var characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    generateId: function() {
+      var result = "";
+      var characters = "abcdefghijklmnopqrstuvwxyz0123456789";
       var charactersLength = characters.length;
-      for ( var i = 0; i < 6; i++ ) {
-          result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      for (var i = 0; i < 6; i++) {
+        result += characters.charAt(
+          Math.floor(Math.random() * charactersLength)
+        );
       }
-      return result;      
+      return result;
     }
-
   }
 };
 </script>
 
 <style scoped lang="scss">
-@import "@/variables.scss";
+@import "@/assets/variables.scss";
 
 .container {
   display: flex;

@@ -1,13 +1,23 @@
 <template>
   <div class="gameover__container">
-    <transition enter-active-class="animated fadeIn" leave-active-class="animated fadeOut">
+    <transition
+      enter-active-class="animated fadeIn"
+      leave-active-class="animated fadeOut"
+    >
       <div v-show="visible" class="gameover__background"></div>
     </transition>
-    <transition enter-active-class="animated shake" leave-active-class="animated bounceOutDown">
+    <transition
+      enter-active-class="animated shake"
+      leave-active-class="animated bounceOutDown"
+    >
       <div v-show="visible" class="gameover__content">
         <h1 class="gameover__heading">Game Over!</h1>
-        <span class="gameover__text">Your score:<strong> {{ score }}</strong></span>
-        <button class="gameover__button" v-on:click="tryAgain">Try Again!</button>
+        <span class="gameover__text"
+          >Your score:<strong> {{ score }}</strong></span
+        >
+        <button class="gameover__button" v-on:click="tryAgain">
+          Try Again!
+        </button>
       </div>
     </transition>
   </div>
@@ -15,21 +25,20 @@
 
 <script>
 export default {
-  name: "GameOver",
   props: {
     visible: Boolean,
     score: Number
   },
   methods: {
-    tryAgain: function () {
-      this.$emit('tryAgain');
+    tryAgain: function() {
+      this.$emit("tryAgain");
     }
   }
 };
 </script>
 
 <style scoped lang="scss">
-@import "@/variables.scss";
+@import "@/assets/variables.scss";
 
 .gameover {
   &__container {

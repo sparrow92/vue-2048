@@ -6,7 +6,6 @@
 
 <script>
 export default {
-  name: "Tile",
   props: {
     x: Number,
     y: Number,
@@ -15,16 +14,16 @@ export default {
   computed: {
     style() {
       return `left: ${this.x * 25}%; top: ${this.y * 25}%`;
-    } 
+    }
   }
 };
 </script>
 
 <style lang="scss">
-@import "@/variables.scss";
+@import "@/assets/variables.scss";
 
 .bounce-enter-active {
-  animation: bounce-in .4s;
+  animation: bounce-in 0.4s;
 }
 @keyframes bounce-in {
   0% {
@@ -47,8 +46,8 @@ export default {
   align-items: center;
   transition: all 100ms ease-in-out;
   font-size: 2rem;
-  font-weight: bold;  
-  animation: bounce-in .4s;
+  font-weight: bold;
+  animation: bounce-in 0.4s;
 
   &--default {
     width: $tile-size;
@@ -60,27 +59,27 @@ export default {
     font-size: 1em;
   }
   &--2 {
-    background:#ede3da;
+    background: #ede3da;
     color: #766e66;
     font-size: 2em;
   }
   &--4 {
-    background:#ecdfc9;
+    background: #ecdfc9;
     color: #766e66;
     font-size: 2em;
   }
   &--8 {
-    background:#edae7c;
+    background: #edae7c;
     color: #fff;
     font-size: 2em;
   }
   &--16 {
-    background:#ef9067;
+    background: #ef9067;
     color: #fff;
     font-size: 2em;
   }
   &--32 {
-    background:#ef7562;
+    background: #ef7562;
     color: #fff;
     font-size: 2em;
   }
@@ -93,31 +92,36 @@ export default {
     background: #eacd78;
     color: #fff;
     font-size: 1.7em;
-    box-shadow: 0px 0px 20px 3px rgba(234,205,120,0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    box-shadow: 0px 0px 20px 3px rgba(234, 205, 120, 0.5),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   }
   &--256 {
     background: #eaca68;
     color: #fff;
     font-size: 1.7em;
-    box-shadow: 0px 0px 22px 3px rgba(234,205,120,0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    box-shadow: 0px 0px 22px 3px rgba(234, 205, 120, 0.5),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   }
   &--512 {
     background: #eac559;
     color: #fff;
     font-size: 1.7em;
-    box-shadow: 0px 0px 25px 3px rgba(234,205,120,0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.10);
+    box-shadow: 0px 0px 25px 3px rgba(234, 205, 120, 0.5),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   }
   &--1024 {
     background: #e9c24a;
     color: #fff;
     font-size: 1.5em;
-    box-shadow: 0px 0px 33px 3px rgba(234,205,120,1), inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+    box-shadow: 0px 0px 33px 3px rgba(234, 205, 120, 1),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.15);
   }
   &--2048 {
     background: #e9bf3d;
     color: #fff;
     font-size: 1.5em;
-    box-shadow: 0px 0px 36px 1px rgba(234,205,120,1), inset 0 0 0 1px rgba(255, 255, 255, 0.20);
+    box-shadow: 0px 0px 36px 1px rgba(234, 205, 120, 1),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.2);
   }
   &--4096 {
     background: #363636;

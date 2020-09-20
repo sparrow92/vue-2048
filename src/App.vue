@@ -8,7 +8,6 @@
 import Gameboard from "./components/Gameboard.vue";
 
 export default {
-  name: "app",
   components: {
     Gameboard
   }
@@ -16,7 +15,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "@/variables.scss";
+@import "@/assets/variables.scss";
 
 html {
   font-size: $base-fontsize;
@@ -32,7 +31,7 @@ body {
 }
 button {
   border: none;
-	cursor: pointer;
+  cursor: pointer;
   outline: inherit;
 }
 #app {
